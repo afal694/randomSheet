@@ -13,9 +13,10 @@
 .title {
 	flex: 0 1 auto;
 }
+
 .actual-container {
 	font-weight: 700;
-	font-size: 7rem;
+	font-size: 8rem;
 	flex: 1 1 50%;
 	display: flex;
 }
@@ -25,6 +26,6 @@
 
 .next-container {
 	font-weight: 300;
-	font-size: 2rem;
+	font-size: 3rem;
 	flex: 0 1 10%;
 }

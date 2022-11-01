@@ -1,26 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const Cmajor_scale = ["C", "D", "E", "F", "G", "A", "B"];
 
 function App() {
-	const [index, setIndex] = useState({
-		actual: null,
-		next: Math.floor(Math.random() * 11),
-	});
+	const [stateNotes, setStateNotes] = useState([
+		// ...notes.sort((a, b) => 0.5 - Math.random()),
+		...Cmajor_scale.sort((a, b) => 0.5 - Math.random()),
+	]);
+
+	const timerRef = useRef(null);
+
+	const [indexNotes, stateIndexNotes] = useState(0);
+
+	const [state, setState] = useState("active");
 
 	useEffect(() => {
-		const timer = setInterval(
-			() =>
-				setIndex((s) => ({
-					next: Math.floor(Math.random() * 11),
-					actual: s.next,
-				})),
-			[2000]
-		);
+		timerRef.current = setInterval(() => {
+			stateIndexNotes((s) => s + 1);
+		}, [2000]);
 
-		return () => clearInterval(timer);
+		console.log({ stateNotes });
+
+		return () => clearInterval(timerRef.current);
 	}, []);
+
+	useEffect(() => {
+		if (indexNotes === stateNotes.length - 1) {
+			clearInterval(timerRef.current);
+			setState("end");
+		}
+	}, [indexNotes]);
+
+	useEffect(() => {
+		if (state === "active") {
+		}
+		console.log({ state });
+	}, [state]);
 
 	return (
 		<div className="app">
@@ -28,10 +45,12 @@ function App() {
 				<h1>Random Sheet</h1>
 			</div>
 			<div className="actual-container">
-				{index.actual !== undefined && <span>{`${notes[index.actual]}`}</span>}
+				<span>{`${stateNotes[indexNotes]}`}</span>
 			</div>
 			<div className="next-container">
-				<span>{`Next: ${notes[index.next]}`}</span>
+				<span>
+					{state === "active" ? `Next: ${stateNotes[indexNotes + 1]}` : "End"}
+				</span>
 			</div>
 		</div>
 	);
