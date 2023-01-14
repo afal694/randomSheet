@@ -1,26 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Cmajor_scale, toBeat } from "./utils";
+import {
+	Cmajor_scale,
+	Cminor_scale,
+	chromatic_scale,
+	sortNotes,
+	toBeat,
+} from "./utils";
+import Select from "./components/SelectComponent";
 
 const beat = 30;
 
 function App() {
-	const [stateNotes, setStateNotes] = useState([
-		// ...notes.sort((a, b) => 0.5 - Math.random()),
-		// ...notes.sort((a, b) => 0.5 - Math.random()),
-		// ...Cmajor_scale.sort(() => 0.5 - Math.random()),
-		...Cmajor_scale.sort(() => 0.5 - Math.random()),
-	]);
-
-	const timerRef = useRef(null);
-
+	const [stateNotes, setStateNotes] = useState([]);
+	const [notesSelected, setNotesSelected] = useState(-1);
 	const [indexNotes, stateIndexNotes] = useState(0);
-
 	const [state, setState] = useState("waiting");
+	const timerRef = useRef(null);
 
 	useEffect(() => {
 		console.log({ stateNotes });
-
 		return () => clearInterval(timerRef.current);
 	}, []);
 
@@ -32,8 +31,19 @@ function App() {
 	}, [indexNotes]);
 
 	useEffect(() => {
-		if (state === "active") {
+		console.info({ notesSelected });
+		if (notesSelected === 0) {
+			setStateNotes(sortNotes(Cmajor_scale));
 		}
+		if (notesSelected === 1) {
+			setStateNotes(sortNotes(Cminor_scale));
+		}
+		if (notesSelected === 2) {
+			setStateNotes(sortNotes(chromatic_scale));
+		}
+	}, [notesSelected]);
+
+	useEffect(() => {
 		console.log({ state });
 	}, [state]);
 
@@ -47,6 +57,10 @@ function App() {
 	};
 
 	const onStart = () => {
+		if (notesSelected === -1) {
+			alert("Please select a group of notes!");
+			return;
+		}
 		setState("active");
 		timerRef.current = setInterval(() => {
 			stateIndexNotes((s) => s + 1);
@@ -58,9 +72,21 @@ function App() {
 		<div className="app">
 			<div className="title">
 				<h1>Random Sheet</h1>
+				<Select
+					classname={""}
+					label={"Select notes"}
+					options={[
+						{ value: 0, name: "C major scale" },
+						{ value: 1, name: "C minor scale" },
+						{ value: 2, name: "Chromatic scale" },
+					]}
+					onSelect={(e) => {
+						setNotesSelected(parseInt(e.target.value));
+					}}
+				/>
 			</div>
 			<div className="actual-container">
-				<span>{`${stateNotes[indexNotes]}`}</span>
+				<span>{`${stateNotes[indexNotes] || "_"}`}</span>
 			</div>
 			<div className="next-container">
 				{state === "end" && (
