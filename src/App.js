@@ -1,22 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-
-const chormatic_scale = [
-	"C",
-	"C#",
-	"D",
-	"D#",
-	"E",
-	"F",
-	"F#",
-	"G",
-	"G#",
-	"A",
-	"A#",
-	"B",
-];
-
-const Cmajor_scale = ["C", "D", "E", "F", "G", "A", "B"];
+import { Cmajor_scale, toBeat } from "./utils";
 
 const beat = 30;
 
@@ -28,8 +12,6 @@ function App() {
 		...Cmajor_scale.sort(() => 0.5 - Math.random()),
 	]);
 
-	return null;
-
 	const timerRef = useRef(null);
 
 	const [indexNotes, stateIndexNotes] = useState(0);
@@ -39,6 +21,7 @@ function App() {
 	useEffect(() => {
 		timerRef.current = setInterval(() => {
 			stateIndexNotes((s) => s + 1);
+			toBeat();
 		}, [60000 / beat]);
 
 		console.log({ stateNotes });
