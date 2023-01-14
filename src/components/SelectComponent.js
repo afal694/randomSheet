@@ -1,7 +1,6 @@
 import React from "react";
 
 function Select({ options, label, classname, onSelect }) {
-
 	return (
 		<div className={`select-class ${classname}`}>
 			<label for="my-select">{label}</label>
@@ -10,7 +9,11 @@ function Select({ options, label, classname, onSelect }) {
 					--Please choose an option--
 				</option>
 				{options.map((o) => (
-					<option key={o.value} onClick={onSelect} value={o.value}>
+					<option
+						key={o.value}
+						onClick={onSelect}
+						onSelect={onSelect}
+						value={o.value}>
 						{o.name}
 					</option>
 				))}
