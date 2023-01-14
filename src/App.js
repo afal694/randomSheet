@@ -51,6 +51,18 @@ function App() {
 				<span>{`${stateNotes[indexNotes]}`}</span>
 			</div>
 			<div className="next-container">
+				{state === "end" && (
+					<button
+						className="restart-button"
+						onClick={() => {
+							timerRef.current = setInterval(() => {
+								stateIndexNotes((s) => s + 1);
+								toBeat();
+							}, [60000 / beat]);
+						}}>
+						Restart
+					</button>
+				)}
 				<span>
 					{state === "active" ? `Next: ${stateNotes[indexNotes + 1]}` : "End"}
 				</span>
