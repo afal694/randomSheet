@@ -24,6 +24,7 @@ export const toBeat = () => {
 };
 
 export const BEAT_OPTIONS = [
+	{ value: 4, name: "30 bpm" },
 	{ value: 0, name: "60 bpm" },
 	{ value: 1, name: "80 bpm" },
 	{ value: 2, name: "120 bpm" },
