@@ -1,48 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-
-const chormatic_scale = [
-	"C",
-	"C#",
-	"D",
-	"D#",
-	"E",
-	"F",
-	"F#",
-	"G",
-	"G#",
-	"A",
-	"A#",
-	"B",
-];
-
-const Cmajor_scale = ["C", "D", "E", "F", "G", "A", "B"];
+import {
+	BEAT_OPTIONS,
+	Cmajor_scale,
+	Cminor_scale,
+	chromatic_scale,
+	sortNotes,
+	toBeat,
+} from "./utils";
+import Select from "./components/SelectComponent";
 
 const beat = 30;
 
 function App() {
-	const [stateNotes, setStateNotes] = useState([
-		// ...notes.sort((a, b) => 0.5 - Math.random()),
-		// ...notes.sort((a, b) => 0.5 - Math.random()),
-		...Cmajor_scale.sort(() => 0.5 - Math.random()),
-		...Cmajor_scale.sort(() => 0.5 - Math.random()),
-	]);
-
-	return null;
-
+	const [stateNotes, setStateNotes] = useState([]);
+	const [notesSelected, setNotesSelected] = useState(-1);
+	const [bpmSelected, setBpmSelected] = useState(-1);
+	const [indexNotes, stateIndexNotes] = useState(0);
+	const [state, setState] = useState("waiting");
 	const timerRef = useRef(null);
 
-	const [indexNotes, stateIndexNotes] = useState(0);
-
-	const [state, setState] = useState("active");
-
 	useEffect(() => {
-		timerRef.current = setInterval(() => {
-			stateIndexNotes((s) => s + 1);
-		}, [60000 / beat]);
-
 		console.log({ stateNotes });
-
 		return () => clearInterval(timerRef.current);
 	}, []);
 
@@ -54,20 +33,96 @@ function App() {
 	}, [indexNotes]);
 
 	useEffect(() => {
-		if (state === "active") {
+		console.info({ notesSelected });
+		if (notesSelected === 0) {
+			setStateNotes(sortNotes(Cmajor_scale));
 		}
+		if (notesSelected === 1) {
+			setStateNotes(sortNotes(Cminor_scale));
+		}
+		if (notesSelected === 2) {
+			setStateNotes(sortNotes(chromatic_scale));
+		}
+	}, [notesSelected]);
+
+	useEffect(() => {
 		console.log({ state });
 	}, [state]);
+
+	useEffect(() => {
+		console.log({ bpmSelected });
+	}, [bpmSelected]);
+
+	const onRestart = () => {
+		stateIndexNotes(0);
+		setState("active");
+		timerRef.current = setInterval(() => {
+			stateIndexNotes((s) => s + 1);
+			toBeat();
+		}, bpmSelected);
+	};
+
+	const onStart = () => {
+		if (notesSelected === -1) {
+			alert("Please select a group of notes!");
+			return;
+		}
+		if (bpmSelected === -1) {
+			alert("Please select a bpm!");
+			return;
+		}
+		setState("active");
+		timerRef.current = setInterval(() => {
+			stateIndexNotes((s) => s + 1);
+			toBeat();
+		}, bpmSelected);
+	};
 
 	return (
 		<div className="app">
 			<div className="title">
 				<h1>Random Sheet</h1>
+				<div className="selects-containaer">
+					<Select
+						classname={""}
+						label={"Select notes"}
+						options={[
+							{ value: 0, name: "C major scale" },
+							{ value: 1, name: "C minor scale" },
+							{ value: 2, name: "Chromatic scale" },
+						]}
+						onSelect={(e) => {
+							setNotesSelected(parseInt(e.target.value));
+						}}
+					/>
+					<Select
+						classname={""}
+						label={"Select bpm"}
+						options={BEAT_OPTIONS}
+						onSelect={(e) => {
+							const value = parseInt(e.target.value);
+							if (value === 0) setBpmSelected(60e3 / 60);
+							if (value === 1) setBpmSelected(60e3 / 80);
+							if (value === 2) setBpmSelected(60e3 / 120);
+							if (value === 3) setBpmSelected(60e3 / 150);
+						}}
+					/>
+				</div>
 			</div>
 			<div className="actual-container">
-				<span>{`${stateNotes[indexNotes]}`}</span>
+				<span>{`${stateNotes[indexNotes] || "_"}`}</span>
 			</div>
 			<div className="next-container">
+				{state === "end" && (
+					<button className="restart-button" onClick={onRestart}>
+						Restart
+					</button>
+				)}
+				{state === "waiting" && (
+					<button className="restart-button" onClick={onStart}>
+						Start
+					</button>
+				)}
 				<span>
 					{state === "active" ? `Next: ${stateNotes[indexNotes + 1]}` : "End"}
 				</span>
