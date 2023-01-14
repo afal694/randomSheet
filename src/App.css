@@ -52,6 +52,6 @@
 }
 
 .restart-button:hover {
-	outline: solid 2px #0c99e6;
+	outline: solid 5px #0c99e6;
 	cursor: pointer;
 }

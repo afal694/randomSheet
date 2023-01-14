@@ -8,7 +8,7 @@ function App() {
 	const [stateNotes, setStateNotes] = useState([
 		// ...notes.sort((a, b) => 0.5 - Math.random()),
 		// ...notes.sort((a, b) => 0.5 - Math.random()),
-		...Cmajor_scale.sort(() => 0.5 - Math.random()),
+		// ...Cmajor_scale.sort(() => 0.5 - Math.random()),
 		...Cmajor_scale.sort(() => 0.5 - Math.random()),
 	]);
 
@@ -16,14 +16,9 @@ function App() {
 
 	const [indexNotes, stateIndexNotes] = useState(0);
 
-	const [state, setState] = useState("active");
+	const [state, setState] = useState("waiting");
 
 	useEffect(() => {
-		timerRef.current = setInterval(() => {
-			stateIndexNotes((s) => s + 1);
-			toBeat();
-		}, [60000 / beat]);
-
 		console.log({ stateNotes });
 
 		return () => clearInterval(timerRef.current);
@@ -42,6 +37,23 @@ function App() {
 		console.log({ state });
 	}, [state]);
 
+	const onRestart = () => {
+		stateIndexNotes(0);
+		setState("active");
+		timerRef.current = setInterval(() => {
+			stateIndexNotes((s) => s + 1);
+			toBeat();
+		}, [60000 / beat]);
+	};
+
+	const onStart = () => {
+		setState("active");
+		timerRef.current = setInterval(() => {
+			stateIndexNotes((s) => s + 1);
+			toBeat();
+		}, [60000 / beat]);
+	};
+
 	return (
 		<div className="app">
 			<div className="title">
@@ -52,15 +64,13 @@ function App() {
 			</div>
 			<div className="next-container">
 				{state === "end" && (
-					<button
-						className="restart-button"
-						onClick={() => {
-							timerRef.current = setInterval(() => {
-								stateIndexNotes((s) => s + 1);
-								toBeat();
-							}, [60000 / beat]);
-						}}>
+					<button className="restart-button" onClick={onRestart}>
 						Restart
+					</button>
+				)}
+				{state === "waiting" && (
+					<button className="restart-button" onClick={onStart}>
+						Start
 					</button>
 				)}
 				<span>
