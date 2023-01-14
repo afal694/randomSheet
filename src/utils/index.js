@@ -23,4 +23,11 @@ export const toBeat = () => {
 	audio.play();
 };
 
+export const BEAT_OPTIONS = [
+	{ value: 0, name: "60 bpm" },
+	{ value: 1, name: "80 bpm" },
+	{ value: 2, name: "120 bpm" },
+	{ value: 3, name: "150 bpm" },
+];
+
 export const sortNotes = (array) => [...array.sort(() => 0.5 - Math.random())];
