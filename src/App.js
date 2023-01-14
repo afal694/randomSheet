@@ -10,8 +10,6 @@ import {
 } from "./utils";
 import Select from "./components/SelectComponent";
 
-const beat = 30;
-
 function App() {
 	const [stateNotes, setStateNotes] = useState([]);
 	const [notesSelected, setNotesSelected] = useState(-1);
@@ -105,6 +103,7 @@ function App() {
 							if (value === 1) setBpmSelected(60e3 / 80);
 							if (value === 2) setBpmSelected(60e3 / 120);
 							if (value === 3) setBpmSelected(60e3 / 150);
+							if (value === 4) setBpmSelected(60e3 / 30);
 						}}
 					/>
 				</div>
